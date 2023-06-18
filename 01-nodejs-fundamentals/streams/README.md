@@ -74,3 +74,16 @@ A transform stream must to be in the middle of a readable and writable streams a
 ```
 
 Putting all of them together in the *fundamentals.js file*, the **oneToHundredStream** reads the index, increments it and put in the pipe, the **InverseNumberStream** takes this chuck and transforms it in a negative number, lastly the  **MultiplyByTenStream** multiplies each chunk by TEN. 
+
+### Consuming streams on impartial data
+
+Sometimes when you want to get the whole data before doing something else, you can by using a **for await** to wait for each chunk, then you need to put all them together and do anything with it. Usually you will be dealing with data that can be partial like videos, songs and texts, but if you need to deal with JSON for example, it's horrible to guess parts of the data without getting all the data. Why tho? 
+
+Example: 
+```json 
+  //FULL DATA: 
+  {"name": "André Geraldo", "username": "andrevks"}
+  //Chunk:
+  // {"name": "André Geraldo
+  //you can't process it before getting the whole data
+```
