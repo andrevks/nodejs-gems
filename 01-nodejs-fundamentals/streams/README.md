@@ -1,5 +1,6 @@
 # NodeJS fundamentals of stream
 
+## NodeJS Process (stdin and stdout)
 In NodeJS any port I/O is automatically a stream.
 
 For example, request and response are streams, so when a request is made in a NodeJS HTTP server, it's possible to let the request open and send data to it in little chunks of data, the same is applied to the response.
@@ -14,4 +15,62 @@ If you can read data chunk by chunk, then you can send each of these data to a *
 process.stdin.pipe(process.stdout)
 ```
 
-This code means everything received as input is being forwarded (pipe is a way to do that ) to an output, in this case, the **stdout**.
+This code means everything received as input is being forwarded (pipe is a way to do that) to an output, in this case, the **stdout**. Usually it is normal to connect streams.
+
+### Readable
+
+A readable stream is one that will read chuck of data.Example: 
+
+```js 
+  class oneToHundredStream extends Readable {
+
+    index = 1;
+
+    _read() {
+      const i = this.index ++
+
+      setTimeout(() => {
+        if (i > 100) { // push is a method in a readable stream provide data to whoever is consuming it
+          this.push(null)
+        } else {
+          const buf = Buffer.from(String(i))
+
+          this.push(buf)
+        }
+      }, 1000)
+    }
+  }
+```
+
+### Writable
+
+A writable stream is a stream that will get data from a readable stream and will make something with each chuck of data (process the data, but not transform it). For example, the **stdout** is a writable stream, it process data. Example:
+
+```js 
+ class MultiplyByTenStream extends Writable { 
+  /**
+   * @param {string} chunk | is the piece of data (chunk in buffer format) from the readable stream
+   * @param {*} enconding | how the data is codificated
+   * @param {*} callback | a function the writable stream call when it finishing processing each chunk of data
+   */
+  _write(chunk, enconding, callback) {
+    console.log(Number(chunk.toString()) * 10)
+    callback()
+  }
+}
+```
+
+### Transform
+
+A transform stream must to be in the middle of a readable and writable streams and it's feature is to transform the chunk of data. It calls the callback and pass the first parameter that's the error (in case it ocurred) and the second parameter which is the transformed data in Buffer format. Example:
+
+```js 
+  class InverseNumberStream extends Transform {
+    _transform(chunk, enconding, callback) {
+      const transformed = Number(chunk.toString()) * -1
+      callback(null, Buffer.from(String(transformed)))
+    }
+  }
+```
+
+Putting all of them together in the *fundamentals.js file*, the **oneToHundredStream** reads the index, increments it and put in the pipe, the **InverseNumberStream** takes this chuck and transforms it in a negative number, lastly the  **MultiplyByTenStream** multiplies each chunk by TEN. 
