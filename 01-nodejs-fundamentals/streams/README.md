@@ -1,6 +1,7 @@
 # NodeJS fundamentals of stream
 
 ## NodeJS Process (stdin and stdout)
+
 In NodeJS any port I/O is automatically a stream.
 
 For example, request and response are streams, so when a request is made in a NodeJS HTTP server, it's possible to let the request open and send data to it in little chunks of data, the same is applied to the response.
@@ -19,9 +20,9 @@ This code means everything received as input is being forwarded (pipe is a way t
 
 ### Readable
 
-A readable stream is one that will read chuck of data.Example: 
+A readable stream is one that will read chuck of data.Example:
 
-```js 
+```js
   class oneToHundredStream extends Readable {
 
     index = 1;
@@ -46,7 +47,7 @@ A readable stream is one that will read chuck of data.Example:
 
 A writable stream is a stream that will get data from a readable stream and will make something with each chuck of data (process the data, but not transform it). For example, the **stdout** is a writable stream, it process data. Example:
 
-```js 
+```js
  class MultiplyByTenStream extends Writable { 
   /**
    * @param {string} chunk | is the piece of data (chunk in buffer format) from the readable stream
@@ -64,7 +65,7 @@ A writable stream is a stream that will get data from a readable stream and will
 
 A transform stream must to be in the middle of a readable and writable streams and it's feature is to transform the chunk of data. It calls the callback and pass the first parameter that's the error (in case it ocurred) and the second parameter which is the transformed data in Buffer format. Example:
 
-```js 
+```js
   class InverseNumberStream extends Transform {
     _transform(chunk, enconding, callback) {
       const transformed = Number(chunk.toString()) * -1
@@ -73,17 +74,44 @@ A transform stream must to be in the middle of a readable and writable streams a
   }
 ```
 
-Putting all of them together in the *fundamentals.js file*, the **oneToHundredStream** reads the index, increments it and put in the pipe, the **InverseNumberStream** takes this chuck and transforms it in a negative number, lastly the  **MultiplyByTenStream** multiplies each chunk by TEN. 
+Putting all of them together in the *fundamentals.js file*, the **oneToHundredStream** reads the index, increments it and put in the pipe, the **InverseNumberStream** takes this chuck and transforms it in a negative number, lastly the  **MultiplyByTenStream** multiplies each chunk by TEN.
 
 ### Consuming streams on impartial data
 
-Sometimes when you want to get the whole data before doing something else, you can by using a **for await** to wait for each chunk, then you need to put all them together and do anything with it. Usually you will be dealing with data that can be partial like videos, songs and texts, but if you need to deal with JSON for example, it's horrible to guess parts of the data without getting all the data. Why tho? 
+Sometimes when you want to get the whole data before doing something else, you can by using a **for await** to wait for each chunk, then you need to put all them together and do anything with it. Usually you will be dealing with data that can be partial like videos, songs and texts, but if you need to deal with JSON for example, it's horrible to guess parts of the data without getting all the data. Why tho?
 
-Example: 
-```json 
+Example:
+
+```json
   //FULL DATA: 
   {"name": "André Geraldo", "username": "andrevks"}
   //Chunk:
   // {"name": "André Geraldo
   //you can't process it before getting the whole data
 ```
+
+### Buffer
+
+- Buffer is a representation of a space from the computer's RAM memory used to transmit data in a really fast way. So, data inside the Buffer is just temporary and will be deleted as soon as possible.
+
+- Read data in binary is faster than any other format because it's a native format of the computer.
+
+- So buffer is a way to JS (in NodeJS) deal with data in a binary way, really close to the computer language.
+
+- The advantage is that it's really fast, that's why streams make use of it.
+
+How buffer works?
+
+It accepts string and transform them into binary, for example:
+
+```js
+const buff = Buffer.from("ok")
+console.log(buff) // <Buffer 6f 6b> -> hexadecimal for O and K.
+
+```
+
+### Middleware
+
+In short: **a function that intercept a request/response (or both) of a route**.
+
+In Node.js, middleware acts like a middleman between incoming requests and route handlers. It's like an interceptor that lets us do things like parsing requests, handling authentication, logging, and managing errors. Middleware helps keep our code organized, reusable, and makes it easy to add extra functionality to requests and responses as they flow through the application.
