@@ -1,6 +1,6 @@
-# NodeJS fundamentals of stream
+# NodeJS Fundamentals
 
-## NodeJS Process (stdin and stdout)
+## NodeJS fundamentals of stream: NodeJS Process (stdin and stdout)
 
 In NodeJS any port I/O is automatically a stream.
 
@@ -115,3 +115,14 @@ console.log(buff) // <Buffer 6f 6b> -> hexadecimal for O and K.
 In short: **a function that intercept a request/response (or both) of a route**.
 
 In Node.js, middleware acts like a middleman between incoming requests and route handlers. It's like an interceptor that lets us do things like parsing requests, handling authentication, logging, and managing errors. Middleware helps keep our code organized, reusable, and makes it easy to add extra functionality to requests and responses as they flow through the application.
+
+
+### URL
+
+Using EsModule the info about the path can be get from the *import.meta.url*, combining with URL you can create a new path with the name passed in the first param, in case you use **"../db.json"** it's like using a **cd..**. Example:
+
+```js
+  new URL('db.json', import.meta.url)
+```
+
+Also, by default when you pass the path, NodeJS will take into account the local where the server is being executed as the place to begin the path, that's why was used the URL and import.meta.url. Using this, doesn't matter where the server is executed.
