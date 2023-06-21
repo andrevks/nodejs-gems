@@ -162,3 +162,57 @@ Also, by default when you pass the path, NodeJS will take into account the local
   PUT 'http://localhost:3333/users'
   // The body part is not part of the URL.
 ```
+
+## **Improvements**
+
+- Usage of *.mjs* files to be able to use top-level await
+- Don't use promises in your constructor, always prefer to manipulate promises. When use promises, deal with them with async/await to garantee syncronism.Example:
+
+```js
+//BEFORE:
+export class Database {
+  #database = {}
+
+  constructor() {
+    // prefer to treat it using async/await and not calling in the constructor
+    //deal with at after instantiating the object to not get unexpected results
+    fs.readFile(databasePath, 'utf-8')
+      .then((data) => {
+        this.#database = JSON.parse(data)
+      })
+      .catch(() => {
+        this.#persist()
+      })
+  }
+  /*
+    Don't have any async/await, this could lead to memory leak.
+    The problem could be with sincronization, let say the file take 15s to be opened.
+    The server is ready to listen and receiving request, but your app would get into a undesired transitory state.
+    So when you call any methods of the database it doesn't exist or just loads soon after it.
+  */
+  #persist() {
+    fs.writeFile(databasePath, JSON.stringify(this.#database))
+  }
+  //...
+}
+
+//AFTER:
+export class Database {
+  #database = {}
+
+  async boot() {
+    const data = await readFile(databasePath, 'utf-8')
+    this.#database = JSON.parse(data)
+  }
+
+  async #persist() {
+    await writeFile(databasePath, JSON.stringify(this.#database))
+  }
+//...
+}
+
+// Instantiate database and call the boot afterwards
+const database = new Database()
+await database.boot() // can you top-level await because of .mjs extension.
+
+```
