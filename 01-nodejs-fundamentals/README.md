@@ -1,6 +1,18 @@
 # NodeJS Fundamentals
 
-## NodeJS fundamentals of stream: NodeJS Process (stdin and stdout)
+Click on the links below to navigate to each section:
+
+- [Fundamentals of stream: NodeJS Process (stdin and stdout)](#fundamentals-of-stream-nodejs-process-stdin-and-stdout)
+- [Readable](#readable)
+- [Writable](#writable)
+- [Transform](#transform)
+- [Consuming streams on impartial data](#consuming-streams-on-impartial-data)
+- [Buffer](#buffer)
+- [Middleware](#middleware)
+- [URL](#url)
+- [Routes Parameters](#routes-parameters)
+
+## Fundamentals of stream: NodeJS Process (stdin and stdout)
 
 In NodeJS any port I/O is automatically a stream.
 
@@ -116,7 +128,6 @@ In short: **a function that intercept a request/response (or both) of a route**.
 
 In Node.js, middleware acts like a middleman between incoming requests and route handlers. It's like an interceptor that lets us do things like parsing requests, handling authentication, logging, and managing errors. Middleware helps keep our code organized, reusable, and makes it easy to add extra functionality to requests and responses as they flow through the application.
 
-
 ### URL
 
 Using EsModule the info about the path can be get from the *import.meta.url*, combining with URL you can create a new path with the name passed in the first param, in case you use **"../db.json"** it's like using a **cd..**. Example:
@@ -126,3 +137,28 @@ Using EsModule the info about the path can be get from the *import.meta.url*, co
 ```
 
 Also, by default when you pass the path, NodeJS will take into account the local where the server is being executed as the place to begin the path, that's why was used the URL and import.meta.url. Using this, doesn't matter where the server is executed.
+
+### Routes Parameters
+
+**Query Parameters**: URL stateful, when I want to save a state, can be use as filters, pagination and non-necessary params. Ex:
+
+```js
+  'http://localhost:3333/users?userId=1&name=André'
+  // These params are not required, but give some filter or search result or whatever.
+```
+
+**Route parameters**: Used as resource identification. Ex:
+
+```js
+  GET 'http://localhost:3333/users/1'
+  DELETE 'http://localhost:3333/users/1'
+  // These params are require to identify which resource will be dealt with.
+```
+
+**Request Body**: Used to send information from a form, it's encrypted on HTTPs. Ex:
+
+```js
+  POST 'http://localhost:3333/users'
+  PUT 'http://localhost:3333/users'
+  // The body part is not part of the URL.
+```
